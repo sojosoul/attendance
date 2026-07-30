@@ -7,7 +7,7 @@
 const CONFIG = {
     // Isi setelah deploy di Remix
     NFT_ADDRESS:        "0x17a9Aa6A8b5f30B2D8b63C01894F50b25d082465",
-    ATTENDANCE_ADDRESS: "0xd9145CCE52D386f254917e481eB44e9943F39138",
+    ATTENDANCE_ADDRESS: "0xeb740d69584315F174E7dE3CE51EA1986604CE86",
 
     // Pinata JWT — dapatkan dari https://app.pinata.cloud/keys
     PINATA_JWT: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiIzMmE2NjU0YS1kZWQ2LTRjZTctOGRmOC1lZjVmZjE5ZWQxZDUiLCJlbWFpbCI6ImhhbmFiaW9yZWtpQGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJwaW5fcG9saWN5Ijp7InJlZ2lvbnMiOlt7ImRlc2lyZWRSZXBsaWNhdGlvbkNvdW50IjoxLCJpZCI6IkZSQTEifSx7ImRlc2lyZWRSZXBsaWNhdGlvbkNvdW50IjoxLCJpZCI6Ik5ZQzEifV0sInZlcnNpb24iOjF9LCJtZmFfZW5hYmxlZCI6ZmFsc2UsInN0YXR1cyI6IkFDVElWRSJ9LCJhdXRoZW50aWNhdGlvblR5cGUiOiJzY29wZWRLZXkiLCJzY29wZWRLZXlLZXkiOiJjODdlNDkyNzU5NmVkMDIwZDNiMyIsInNjb3BlZEtleVNlY3JldCI6IjUyNzNmMTVlNTAwZjk5NmIxOTY1YjY4MWMxZWE2ODE3ZGFmM2M1Mzg5OWVhYzlhZDNlNzUyZDBmMTllM2QzNzciLCJleHAiOjE4MTY5MDg0NjF9.WZPFk52-xUoj_5h6-nzeRaWW5p-TNPW3I2ZcuPoyXFE",
@@ -804,8 +804,8 @@ const NFT_ABI = [
 // ABI Attendance (Presensi)
 // ============================================================
 const ATTENDANCE_ABI = [
-    {
-            "inputs": [
+				{
+				"inputs": [
 					{
 						"internalType": "address",
 						"name": "_nftContract",
@@ -907,16 +907,6 @@ const ATTENDANCE_ABI = [
 						"internalType": "string",
 						"name": "_cidFoto",
 						"type": "string"
-					},
-					{
-						"internalType": "string",
-						"name": "_lat",
-						"type": "string"
-					},
-					{
-						"internalType": "string",
-						"name": "_long",
-						"type": "string"
 					}
 				],
 				"name": "checkIn",
@@ -994,16 +984,6 @@ const ATTENDANCE_ABI = [
 								"type": "string"
 							},
 							{
-								"internalType": "string",
-								"name": "lat_checkin",
-								"type": "string"
-							},
-							{
-								"internalType": "string",
-								"name": "long_checkin",
-								"type": "string"
-							},
-							{
 								"internalType": "bool",
 								"name": "sudah_checkin",
 								"type": "bool"
@@ -1052,16 +1032,6 @@ const ATTENDANCE_ABI = [
 							{
 								"internalType": "string",
 								"name": "cid_foto_checkout",
-								"type": "string"
-							},
-							{
-								"internalType": "string",
-								"name": "lat_checkin",
-								"type": "string"
-							},
-							{
-								"internalType": "string",
-								"name": "long_checkin",
 								"type": "string"
 							},
 							{
@@ -1217,16 +1187,6 @@ const ATTENDANCE_ABI = [
 					{
 						"internalType": "string",
 						"name": "cid_foto_checkout",
-						"type": "string"
-					},
-					{
-						"internalType": "string",
-						"name": "lat_checkin",
-						"type": "string"
-					},
-					{
-						"internalType": "string",
-						"name": "long_checkin",
 						"type": "string"
 					},
 					{

@@ -162,4 +162,18 @@ function setLoading(btnId, loading, teks = "") {
     } else {
         btn.innerText = btn.dataset.original || btn.innerText;
     }
+
+
+// BigInt to Num
+function toNum(val) {
+    if (val == null || val == undefined) return 0;
+    return Number(val)
+}
+
+// BigInt to String
+function toStr(val) {
+    if (val == null || val == undefined) return "";
+    return val.toString()
+}
+
 }

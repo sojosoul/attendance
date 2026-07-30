@@ -191,7 +191,8 @@ async function loadRekap() {
     try {
         const wallets = await nftContract.methods.getAllRegisteredWallets().call();
         if (wallets.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="8" class="text-center text-soft" style="padding:20px">Belum ada pengguna terdaftar</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="8" class="text-center text-soft" style="padding:20px">
+            Belum ada pengguna terdaftar</td></tr>`;
             return;
         }
 
@@ -201,10 +202,14 @@ async function loadRekap() {
             const userData = await nftContract.methods.getUserData(wallet).call();
             if (!userData.aktif) continue;
 
-            const record = await attendanceContract.methods.getRecordHariIni(wallet).call();
+            const record = await attendanceContract.methods.
+            getRecordHariIni(wallet).call();
 
-            const waktuCI = record.sudah_checkin  ? formatTimestamp(record.timestamp_checkin)  : "-";
-            const waktuCO = record.sudah_checkout ? formatTimestamp(record.timestamp_checkout) : "-";
+            const tsCI = toNum(record.timestamp_checkin)
+            const tsCO = toStr(record.timestamp_checkout)
+
+            const waktuCI = record.sudah_checkin  ? formatTimestamp(tsCI)  : "-";
+            const waktuCO = record.sudah_checkout ? formatTimestamp(tsCO) : "-";
 
             const fotoCILink = record.sudah_checkin && record.cid_foto_checkin
                 ? `<a href="${CONFIG.IPFS_GATEWAY}${record.cid_foto_checkin}" target="_blank" class="badge badge-success">Lihat</a>`
@@ -301,25 +306,25 @@ async function loadRiwayat() {
 }
 
 // ---- EXPORT CSV ----
-function exportCSV() {
-    if (rekapData.length === 0) {
-        showAlert("Tidak ada data untuk diexport. Klik Refresh dulu.", "error");
-        return;
-    }
+// function exportCSV() {
+//     if (rekapData.length === 0) {
+//         showAlert("Tidak ada data untuk diexport. Klik Refresh dulu.", "error");
+//         return;
+//     }
 
-    const header = ["Nama","ID","Wallet","Check-In","Check-Out","CID Foto CI","CID Foto CO"];
-    const rows   = rekapData.map(d =>
-        [d.nama, d.id, d.wallet, d.checkin, d.checkout, d.cid_ci, d.cid_co]
-    );
+//     const header = ["Nama","ID","Wallet","Check-In","Check-Out","CID Foto CI","CID Foto CO"];
+//     const rows   = rekapData.map(d =>
+//         [d.nama, d.id, d.wallet, d.checkin, d.checkout, d.cid_ci, d.cid_co]
+//     );
 
-    const csv     = [header, ...rows].map(r => r.join(",")).join("\n");
-    const blob    = new Blob([csv], { type: "text/csv" });
-    const url     = URL.createObjectURL(blob);
-    const a       = document.createElement("a");
-    const tanggal = new Date().toISOString().split("T")[0];
+//     const csv     = [header, ...rows].map(r => r.join(",")).join("\n");
+//     const blob    = new Blob([csv], { type: "text/csv" });
+//     const url     = URL.createObjectURL(blob);
+//     const a       = document.createElement("a");
+//     const tanggal = new Date().toISOString().split("T")[0];
 
-    a.href     = url;
-    a.download = `rekap-presensi-${tanggal}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
-}
+//     a.href     = url;
+//     a.download = `rekap-presensi-${tanggal}.csv`;
+//     a.click();
+//     URL.revokeObjectURL(url);
+// }

@@ -6,7 +6,7 @@
 let walletUser;
 let aksiPresensi = null; // "checkin" atau "checkout"
 let fotoBlob     = null;
-let gpsData      = null;
+// let gpsData      = null;
 let fotoSudahDiambil = false;
 
 // ---- Init saat halaman load ----
@@ -132,16 +132,16 @@ async function captureAndPreview() {
     fotoSudahDiambil = true;
 
     // Ambil GPS di background
-    gpsData = null;
-    getGPS().then(gps => {
-        gpsData = gps;
-        const infoEl = document.getElementById("infoGPS");
-        if (gps.lat !== "0") {
-            infoEl.innerText = `📍 Lokasi: ${parseFloat(gps.lat).toFixed(5)}, ${parseFloat(gps.long).toFixed(5)}`;
-        } else {
-            infoEl.innerText = "📍 GPS tidak tersedia (lokasi tidak dicatat)";
-        }
-    });
+    // gpsData = null;
+    // getGPS().then(gps => {
+    //     gpsData = gps;
+    //     const infoEl = document.getElementById("infoGPS");
+    //     if (gps.lat !== "0") {
+    //         infoEl.innerText = `📍 Lokasi: ${parseFloat(gps.lat).toFixed(5)}, ${parseFloat(gps.long).toFixed(5)}`;
+    //     } else {
+    //         infoEl.innerText = "📍 GPS tidak tersedia (lokasi tidak dicatat)";
+    //     }
+    // });
 
     // Stop kamera setelah capture
     stopCamera();
@@ -189,8 +189,8 @@ async function kirimPresensi() {
     document.getElementById("stepKonfirmasi").classList.add("hidden");
     document.getElementById("stepLoading").classList.remove("hidden");
 
-    const lat  = gpsData ? gpsData.lat  : "0";
-    const long = gpsData ? gpsData.long : "0";
+    // const lat  = gpsData ? gpsData.lat  : "0";
+    // const long = gpsData ? gpsData.long : "0";
 
     try {
         // Step 1: Upload foto ke IPFS
@@ -203,7 +203,7 @@ async function kirimPresensi() {
         let tx;
         if (aksiPresensi === "checkin") {
             tx = await attendanceContract.methods
-                .checkIn(cidFoto, lat, long)
+                .checkIn(cidFoto)
                 .send({ from: walletUser });
         } else {
             tx = await attendanceContract.methods
@@ -277,9 +277,14 @@ async function loadRiwayat() {
             return;
         }
 
+        const datesNum = [...dates].map(d => toNum(d)).slice().reverse().slice(0, 10);
+
         let html = "";
-        for (const tanggal of dates.slice().reverse().slice(0, 10)) {
+        for (const tanggal of datesNum) {
             const rec = await attendanceContract.methods.getRecord(walletUser, tanggal).call();
+
+            const tsCI = toNum(rec.timestamp_checkin)
+            const tsCO = toStr(rec.timestamp_checkout)
 
             const fotoCILink = rec.cid_foto_checkin
                 ? `<a href="${CONFIG.IPFS_GATEWAY}${rec.cid_foto_checkin}" target="_blank" class="badge badge-success">Lihat</a>`
@@ -291,8 +296,8 @@ async function loadRiwayat() {
             html += `
                 <tr>
                     <td>${formatTanggal(tanggal)}</td>
-                    <td>${formatTimestamp(rec.timestamp_checkin)}</td>
-                    <td>${rec.sudah_checkout ? formatTimestamp(rec.timestamp_checkout) : "-"}</td>
+                    <td>${formatTimestamp(tsCI)}</td>
+                    <td>${rec.sudah_checkout ? formatTimestamp(tsCO) : "-"}</td>
                     <td>${fotoCILink}</td>
                     <td>${statusBadge}</td>
                 </tr>`;

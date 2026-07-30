@@ -4,7 +4,7 @@
 // ============================================================
 
 let walletAdmin;
-let rekapData = []; // untuk export CSV
+// let rekapData = []; // untuk export CSV
 
 // ---- Init saat halaman load ----
 window.addEventListener("load", async () => {
@@ -273,9 +273,15 @@ async function loadRiwayat() {
             return;
         }
 
+        const datesNum = [...dates].map(d => toNum(d)).reverse();
+
         let html = "";
-        for (const tanggal of dates.slice().reverse()) {
-            const rec = await attendanceContract.methods.getRecord(wallet, tanggal).call();
+        for (const tanggal of datesNum) {
+            const rec = await attendanceContract.methods.
+            getRecord(wallet, tanggal).call();
+
+            const tsCI = toNum(rec.timestamp_checkin);
+            const tsCO = toStr(rec.timestamp_checkout);            
 
             const fotoCILink = rec.cid_foto_checkin
                 ? `<a href="${CONFIG.IPFS_GATEWAY}${rec.cid_foto_checkin}" target="_blank" class="badge badge-success">Lihat</a>`
@@ -290,8 +296,8 @@ async function loadRiwayat() {
             html += `
                 <tr>
                     <td>${formatTanggal(tanggal)}</td>
-                    <td>${formatTimestamp(rec.timestamp_checkin)}</td>
-                    <td>${rec.sudah_checkout ? formatTimestamp(rec.timestamp_checkout) : "-"}</td>
+                    <td>${formatTimestamp(tsCI)}</td>
+                    <td>${rec.sudah_checkout ? formatTimestamp(tsCO) : "-"}</td>
                     <td>${fotoCILink}</td>
                     <td>${fotoCOLink}</td>
                     <td>${statusBadge}</td>

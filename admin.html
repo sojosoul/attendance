@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin — Sistem Presensi</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header>
+    <h1>⚙️ Admin Panel</h1>
+    <div class="wallet-info" id="walletInfo">Menghubungkan...</div>
+</header>
+
+<div class="container">
+
+    <!-- STATS ROW -->
+    <div class="stats-row">
+        <div class="stat-card">
+            <div class="stat-num" id="statTotal">-</div>
+            <div class="stat-label">Total Terdaftar</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-num" id="statHadir">-</div>
+            <div class="stat-label">Hadir Hari Ini</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-num" id="statCheckout">-</div>
+            <div class="stat-label">Sudah Check-Out</div>
+        </div>
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('tab-mint', this)">➕ Daftarkan User</button>
+        <button class="tab-btn" onclick="switchTab('tab-revoke', this)">❌ Cabut Akses</button>
+        <button class="tab-btn" onclick="switchTab('tab-rekap', this)">📋 Rekap Presensi</button>
+    </div>
+
+    <!-- TAB: MINT NFT -->
+    <div class="tab-content active" id="tab-mint">
+        <div class="card">
+            <div class="card-title">Daftarkan Pengguna Baru</div>
+            <div class="form-group">
+                <label>Nama Lengkap</label>
+                <input type="text" id="inputNama" placeholder="Contoh: Budi Santoso">
+            </div>
+            <div class="form-group">
+                <label>ID Pengguna</label>
+                <input type="text" id="inputID" placeholder="Contoh: USR-001">
+            </div>
+            <div class="form-group">
+                <label>Wallet Address Pengguna</label>
+                <input type="text" id="inputWallet" placeholder="0x...">
+            </div>
+            <button class="btn btn-primary" id="btnMint" onclick="prosesMintt()">
+                🪙 Terbitkan NFT Akses
+            </button>
+            <div id="mintResult" class="mt-16 hidden">
+                <hr class="divider">
+                <p class="text-soft">✅ NFT berhasil diterbitkan!</p>
+                <p class="text-soft">CID Metadata: <span id="mintCID" class="tx-link"></span></p>
+                <p class="text-soft">TX Hash: <a id="mintTX" class="tx-link" target="_blank"></a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB: REVOKE -->
+    <div class="tab-content" id="tab-revoke">
+        <div class="card">
+            <div class="card-title">Cabut Akses Pengguna</div>
+            <div class="form-group">
+                <label>Wallet Address Pengguna</label>
+                <input type="text" id="inputRevokeWallet" placeholder="0x...">
+            </div>
+            <div id="revokeUserInfo" class="hidden" style="padding:12px;background:#f8f9ff;border-radius:8px;margin-bottom:16px;font-size:13px;">
+                <p><b>Nama:</b> <span id="revokeNama"></span></p>
+                <p><b>ID:</b> <span id="revokeID"></span></p>
+                <p><b>Status:</b> <span id="revokeStatus"></span></p>
+            </div>
+            <div class="grid-2">
+                <button class="btn btn-gray" onclick="cekUserRevoke()">🔍 Cek User</button>
+                <button class="btn btn-danger" id="btnRevoke" onclick="prosesRevoke()" disabled>🗑️ Cabut Akses</button>
+            </div>
+            <div id="revokeResult" class="mt-16 hidden">
+                <hr class="divider">
+                <p class="text-soft">✅ Akses berhasil dicabut!</p>
+                <p class="text-soft">TX Hash: <a id="revokeTX" class="tx-link" target="_blank"></a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB: REKAP -->
+    <div class="tab-content" id="tab-rekap">
+        <div class="card">
+            <div class="card-title">Rekap Presensi Hari Ini</div>
+            <div style="display:flex;gap:8px;margin-bottom:16px;">
+                <button class="btn btn-primary btn-sm" onclick="loadRekap()">🔄 Refresh</button>
+                <button class="btn btn-gray btn-sm" onclick="exportCSV()">📥 Export CSV</button>
+            </div>
+            <div class="table-wrap">
+                <table id="tabelRekap">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Nama</th>
+                            <th>ID</th>
+                            <th>Wallet</th>
+                            <th>Check-In</th>
+                            <th>Check-Out</th>
+                            <th>Foto CI</th>
+                            <th>Foto CO</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rekapBody">
+                        <tr><td colspan="8" class="text-center text-soft" style="padding:24px">Klik Refresh untuk memuat data</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Detail pengguna -->
+        <div class="card">
+            <div class="card-title">Riwayat Presensi Per Pengguna</div>
+            <div style="display:flex;gap:8px;">
+                <input type="text" id="inputRiwayatWallet" placeholder="Wallet address pengguna" style="flex:1;padding:10px 14px;border:1px solid var(--border);border-radius:8px;font-size:14px;">
+                <button class="btn btn-primary btn-sm" onclick="loadRiwayat()">🔍 Cari</button>
+            </div>
+            <div class="table-wrap mt-16">
+                <table id="tabelRiwayat">
+                    <thead>
+                        <tr>
+                            <th>Tanggal</th>
+                            <th>Check-In</th>
+                            <th>Check-Out</th>
+                            <th>Foto CI</th>
+                            <th>Foto CO</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="riwayatBody">
+                        <tr><td colspan="6" class="text-center text-soft" style="padding:24px">Masukkan wallet address dan klik Cari</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/web3-init.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>

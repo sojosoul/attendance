@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Presensi Terdesentralisasi</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="connect-page">
+    <div class="logo">🔐</div>
+    <h2>Sistem Presensi Terdesentralisasi</h2>
+    <p>Hubungkan wallet MetaMask kamu untuk melanjutkan. Pastikan kamu berada di jaringan Polygon Amoy Testnet.</p>
+    <button class="btn btn-primary" id="btnConnect" onclick="masukSistem()">
+        🦊 Connect MetaMask
+    </button>
+    <p class="text-soft mt-8" id="statusConnect"></p>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/web3-init.js"></script>
+<script>
+    async function masukSistem() {
+        const statusEl = document.getElementById("statusConnect");
+        const btn = document.getElementById("btnConnect");
+
+        btn.disabled = true;
+        btn.innerText = "Menghubungkan...";
+        statusEl.innerText = "Meminta izin MetaMask...";
+
+        const wallet = await connectWallet();
+        if (!wallet) {
+            btn.disabled = false;
+            btn.innerText = "🦊 Connect MetaMask";
+            statusEl.innerText = "Gagal connect. Coba lagi.";
+            return;
+        }
+
+        statusEl.innerText = "Mengecek akses NFT...";
+
+        // Cek apakah owner contract (admin)
+        let isOwner = false;
+        try {
+            const owner = await nftContract.methods.owner().call();
+            isOwner = owner.toLowerCase() === wallet.toLowerCase();
+        } catch(e) {}
+
+        if (isOwner) {
+            // Arahkan ke halaman admin
+            window.location.href = "./admin.html";
+            return;
+        }
+
+        // Cek apakah punya NFT akses
+        const punyaAkses = await nftContract.methods.hasAccess(wallet).call();
+        if (punyaAkses) {
+            window.location.href = "user.html";
+        } else {
+            btn.disabled = false;
+            btn.innerText = "🦊 Connect MetaMask";
+            statusEl.innerHTML = `
+                ❌ Wallet <b>${formatAddress(wallet)}</b> tidak memiliki akses.<br>
+                <span style="font-size:12px">Hubungi admin untuk mendaftarkan wallet kamu.</span>
+            `;
+        }
+    }
+</script>
+</body>
+</html>

@@ -6,7 +6,7 @@
 
 const CONFIG = {
     // Isi setelah deploy di Remix
-    NFT_ADDRESS:        "0x17a9Aa6A8b5f30B2D8b63C01894F50b25d082465",
+    NFT_ADDRESS:        "0x60e922ba2D69A3422Ed0dE1832d1FC8733026fE7",
     ATTENDANCE_ADDRESS: "0xeb740d69584315F174E7dE3CE51EA1986604CE86",
 
     // Pinata JWT — dapatkan dari https://app.pinata.cloud/keys
@@ -26,7 +26,7 @@ const CONFIG = {
 // Copy dari Remix → Solidity Compiler → Compilation Details → ABI
 // ============================================================
 const NFT_ABI = [
-        {
+        			{
 				"inputs": [],
 				"stateMutability": "nonpayable",
 				"type": "constructor"
@@ -797,7 +797,7 @@ const NFT_ABI = [
 				],
 				"stateMutability": "view",
 				"type": "function"
-			}	
+			}
 ];
 
 // ============================================================

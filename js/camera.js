@@ -74,27 +74,27 @@ async function canvasToBlob(canvas, quality = 0.85) {
 }
 
 // ---- Ambil koordinat GPS ----
-async function getGPS() {
-    // return new Promise((resolve, reject) => {
-    //     if (!navigator.geolocation) {
-    //         reject(new Error("GPS tidak didukung browser ini"));
-    //         return;
-    //     }
+// async function getGPS() {
+//     return new Promise((resolve, reject) => {
+//         if (!navigator.geolocation) {
+//             reject(new Error("GPS tidak didukung browser ini"));
+//             return;
+//         }
 
-    //     navigator.geolocation.getCurrentPosition(
-    //         (pos) => {
-    //             resolve({
-    //                 lat:  pos.coords.latitude.toString(),
-    //                 long: pos.coords.longitude.toString(),
-    //                 accuracy: pos.coords.accuracy
-    //             });
-    //         },
-    //         (err) => {
-    //             // GPS gagal tapi tidak block presensi — kirim string kosong
-    //             console.warn("GPS tidak tersedia:", err.message);
-    //             resolve({ lat: "0", long: "0", accuracy: 0 });
-    //         },
-    //         { timeout: 8000, enableHighAccuracy: true }
-    //     );
-    // });
-}
+//         navigator.geolocation.getCurrentPosition(
+//             (pos) => {
+//                 resolve({
+//                     lat:  pos.coords.latitude.toString(),
+//                     long: pos.coords.longitude.toString(),
+//                     accuracy: pos.coords.accuracy
+//                 });
+//             },
+//             (err) => {
+//                 // GPS gagal tapi tidak block presensi — kirim string kosong
+//                 console.warn("GPS tidak tersedia:", err.message);
+//                 resolve({ lat: "0", long: "0", accuracy: 0 });
+//             },
+//             { timeout: 8000, enableHighAccuracy: true }
+//         );
+//     });
+// }

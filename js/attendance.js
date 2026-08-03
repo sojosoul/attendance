@@ -91,6 +91,8 @@ async function loadStatusHariIni() {
 // ---- Load riwayat presensi ----
 async function loadRiwayat() {
     const tbody = document.getElementById("riwayatBody");
+    if (!tbody) return;
+    
     try {
         const dates = await attendanceContract.methods.getHistory(walletUser).call();
 

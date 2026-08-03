@@ -130,8 +130,6 @@ async function loadRiwayat() {
 // ---- Kirim presensi ke blockchain ----
 async function kirimPresensi() {
     try {
-        // Step 2: Kirim transaksi ke blockchain
-        document.getElementById("loadingText").innerText = "Menunggu konfirmasi blockchain...";
 
         let tx;
         if (aksiPresensi === "checkin") {
@@ -144,17 +142,8 @@ async function kirimPresensi() {
             .send({ from: walletUser });
         }
 
-        // Step 3: Tampilkan sukses
-        document.getElementById("stepLoading").classList.add("hidden");
+        document.getElementById("stepPilih").classList.add("hidden");
         document.getElementById("stepSukses").classList.remove("hidden");
-        
-        const judul = aksiPresensi === "checkin" ? "Check-In Berhasil! ✅" : "Check-Out Berhasil! 🏁";
-        const sub   = aksiPresensi === "checkin"
-        ? "Kehadiranmu telah tercatat di blockchain."
-        : "Check-out berhasil. Sampai jumpa besok!";
-        
-        document.getElementById("suksesJudul").innerText = judul;
-        document.getElementById("suksesSub").innerText   = sub;
         
         const txLink = `https://sepolia.etherscan.io/tx/${tx.transactionHash}`;
         document.getElementById("suksesTX").innerText = tx.transactionHash;
@@ -165,9 +154,7 @@ async function kirimPresensi() {
         await loadRiwayat();
         
     } catch(e) {
-        document.getElementById("stepLoading").classList.add("hidden");
-        document.getElementById("stepKonfirmasi").classList.remove("hidden");
-        
+
         let pesanError = e.message || "Terjadi kesalahan";
         if (pesanError.includes("Sudah check-in")) {
             pesanError = "Kamu sudah melakukan check-in hari ini!";

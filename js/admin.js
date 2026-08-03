@@ -94,7 +94,6 @@ async function prosesMintt() {
             .send({ from: walletAdmin });
 
         // Step 3: Tampilkan hasil
-        document.getElementById("mintCID").innerText = cidMetadata;
         document.getElementById("mintTX").innerText  = tx.transactionHash;
         document.getElementById("mintTX").href =
             `https://sepolia.etherscan.io/tx/${tx.transactionHash}`;

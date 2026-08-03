@@ -22,7 +22,7 @@ async function connectWallet() {
         });
         currentWallet = accounts[0];
 
-        // Cek network — harus Polygon Amoy
+        // Cek network — sepolia
         const chainId = await window.ethereum.request({ method: "eth_chainId" });
         if (chainId !== CONFIG.CHAIN_ID) {
             await switchToSepolia();

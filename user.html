@@ -51,19 +51,11 @@
         <!-- Step 1: Pilih aksi -->
         <div id="stepPilih">
             <div class="grid-2">
-                <button class="btn btn-success" id="btnCI" onclick="mulaiPresensi('checkin')">
+                <button class="btn btn-success" id="btnCI" onclick="kirimPresensi()">
                     ✅ Check-In
                 </button>
-                <button class="btn btn-primary" id="btnCO" onclick="mulaiPresensi('checkout')">
+                <button class="btn btn-primary" id="btnCO" onclick="kirimPresensi()">
                     🏁 Check-Out
-                </button>
-            </div>
-        </div>
-
-        <!-- Step 3: Konfirmasi -->
-        <div id="stepKonfirmasi" class="hidden">
-                <button class="btn btn-primary" id="btnKirim" onclick="kirimPresensi()">
-                    🚀 Kirim Presensi
                 </button>
             </div>
         </div>
@@ -81,7 +73,7 @@
     </div>
 
     <!-- RIWAYAT PRESENSI -->
-    <div class="card">
+    <!-- <div class="card">
         <div class="card-title">Riwayat Presensi Saya</div>
         <div class="table-wrap">
             <table>
@@ -98,7 +90,7 @@
                 </tbody>
             </table>
         </div>
-    </div>
+    </div> -->
 
 </div>
 

@@ -108,10 +108,6 @@ async function loadRiwayat() {
             const tsCI = toNum(rec.timestamp_checkin)
             const tsCO = toStr(rec.timestamp_checkout)
 
-            const fotoCILink = rec.cid_foto_checkin
-                ? `<a href="${CONFIG.IPFS_GATEWAY}${rec.cid_foto_checkin}" target="_blank" class="badge badge-success">Lihat</a>`
-                : "-";
-
             let statusBadge = '<span class="badge badge-warning">Check-In</span>';
             if (rec.sudah_checkout) statusBadge = '<span class="badge badge-success">Lengkap</span>';
 
@@ -120,7 +116,6 @@ async function loadRiwayat() {
                     <td>${formatTanggal(tanggal)}</td>
                     <td>${formatTimestamp(tsCI)}</td>
                     <td>${rec.sudah_checkout ? formatTimestamp(tsCO) : "-"}</td>
-                    <td>${fotoCILink}</td>
                     <td>${statusBadge}</td>
                 </tr>`;
         }
@@ -132,18 +127,8 @@ async function loadRiwayat() {
     }
 }
 
-// ---- Mulai proses presensi ----
-async function mulaiPresensi(aksi) {
-    aksiPresensi     = aksi;
-}
-
 // ---- Kirim presensi ke blockchain ----
 async function kirimPresensi() {
-    // Tampilkan loading
-    document.getElementById("stepKonfirmasi").classList.add("hidden");
-    document.getElementById("stepLoading").classList.remove("hidden");
-
-
     try {
         // Step 2: Kirim transaksi ke blockchain
         document.getElementById("loadingText").innerText = "Menunggu konfirmasi blockchain...";
@@ -151,10 +136,12 @@ async function kirimPresensi() {
         let tx;
         if (aksiPresensi === "checkin") {
             tx = await attendanceContract.methods
+                .checkIn()
                 .send({ from: walletUser });
         } else {
             tx = await attendanceContract.methods
-                .send({ from: walletUser });
+            .checkOut()
+            .send({ from: walletUser });
         }
 
         // Step 3: Tampilkan sukses
@@ -169,7 +156,7 @@ async function kirimPresensi() {
         document.getElementById("suksesJudul").innerText = judul;
         document.getElementById("suksesSub").innerText   = sub;
         
-        const txLink = `https://amoy.polygonscan.com/tx/${tx.transactionHash}`;
+        const txLink = `https://sepolia.etherscan.io/tx/${tx.transactionHash}`;
         document.getElementById("suksesTX").innerText = tx.transactionHash;
         document.getElementById("suksesTX").href      = txLink;
         

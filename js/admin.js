@@ -90,7 +90,7 @@ async function prosesMintt() {
         // Step 2: Mint NFT
         showAlert("Minting NFT ke blockchain...", "info");
         const tx = await nftContract.methods
-            .mintAccess(wallet, tokenURI, nama, id)
+            .mintAccess(wallet, nama, id)
             .send({ from: walletAdmin });
 
         // Step 3: Tampilkan hasil

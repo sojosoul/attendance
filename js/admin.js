@@ -87,11 +87,6 @@ async function prosesMintt() {
     setLoading("btnMint", true, "⏳ Upload metadata ke IPFS...");
 
     try {
-        // Step 1: Upload metadata ke IPFS
-        showAlert("Mengupload metadata ke IPFS...", "info");
-        const cidMetadata = await uploadMetadataIPFS(nama, id);
-        const tokenURI    = `ipfs://${cidMetadata}`;
-
         // Step 2: Mint NFT
         showAlert("Minting NFT ke blockchain...", "info");
         const tx = await nftContract.methods
@@ -102,7 +97,8 @@ async function prosesMintt() {
         document.getElementById("mintCID").innerText = cidMetadata;
         document.getElementById("mintTX").innerText  = tx.transactionHash;
         document.getElementById("mintTX").href =
-            `https://amoy.polygonscan.com/tx/${tx.transactionHash}`;
+            `https://sepolia.etherscan.io/tx/${tx.transactionHash}`;
+            
         document.getElementById("mintResult").classList.remove("hidden");
 
         // Reset form
@@ -211,14 +207,6 @@ async function loadRekap() {
             const waktuCI = record.sudah_checkin  ? formatTimestamp(tsCI)  : "-";
             const waktuCO = record.sudah_checkout ? formatTimestamp(tsCO) : "-";
 
-            const fotoCILink = record.sudah_checkin && record.cid_foto_checkin
-                ? `<a href="${CONFIG.IPFS_GATEWAY}${record.cid_foto_checkin}" target="_blank" class="badge badge-success">Lihat</a>`
-                : `<span class="badge badge-gray">-</span>`;
-
-            const fotoCOLink = record.sudah_checkout && record.cid_foto_checkout
-                ? `<a href="${CONFIG.IPFS_GATEWAY}${record.cid_foto_checkout}" target="_blank" class="badge badge-success">Lihat</a>`
-                : `<span class="badge badge-gray">-</span>`;
-
             let statusBadge = '<span class="badge badge-gray">Belum Hadir</span>';
             if (record.sudah_checkout) statusBadge = '<span class="badge badge-success">Selesai</span>';
             else if (record.sudah_checkin) statusBadge = '<span class="badge badge-warning">Check-In</span>';
@@ -231,8 +219,6 @@ async function loadRekap() {
                     <td style="font-size:11px">${formatAddress(wallet)}</td>
                     <td>${waktuCI}</td>
                     <td>${waktuCO}</td>
-                    <td>${fotoCILink}</td>
-                    <td>${fotoCOLink}</td>
                 </tr>`;
 
             rekapData.push({
@@ -241,8 +227,6 @@ async function loadRekap() {
                 wallet,
                 checkin: waktuCI,
                 checkout: waktuCO,
-                cid_ci: record.cid_foto_checkin || "-",
-                cid_co: record.cid_foto_checkout || "-"
             });
         }
 
@@ -283,13 +267,6 @@ async function loadRiwayat() {
             const tsCI = toNum(rec.timestamp_checkin);
             const tsCO = toStr(rec.timestamp_checkout);            
 
-            const fotoCILink = rec.cid_foto_checkin
-                ? `<a href="${CONFIG.IPFS_GATEWAY}${rec.cid_foto_checkin}" target="_blank" class="badge badge-success">Lihat</a>`
-                : "-";
-            const fotoCOLink = rec.cid_foto_checkout
-                ? `<a href="${CONFIG.IPFS_GATEWAY}${rec.cid_foto_checkout}" target="_blank" class="badge badge-success">Lihat</a>`
-                : "-";
-
             let statusBadge = '<span class="badge badge-warning">Hanya Check-In</span>';
             if (rec.sudah_checkout) statusBadge = '<span class="badge badge-success">Lengkap</span>';
 
@@ -298,8 +275,6 @@ async function loadRiwayat() {
                     <td>${formatTanggal(tanggal)}</td>
                     <td>${formatTimestamp(tsCI)}</td>
                     <td>${rec.sudah_checkout ? formatTimestamp(tsCO) : "-"}</td>
-                    <td>${fotoCILink}</td>
-                    <td>${fotoCOLink}</td>
                     <td>${statusBadge}</td>
                 </tr>`;
         }

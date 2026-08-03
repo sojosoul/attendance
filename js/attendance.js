@@ -5,9 +5,6 @@
 
 let walletUser;
 let aksiPresensi = null; // "checkin" atau "checkout"
-let fotoBlob     = null;
-// let gpsData      = null;
-let fotoSudahDiambil = false;
 
 // ---- Init saat halaman load ----
 window.addEventListener("load", async () => {
@@ -138,123 +135,25 @@ async function loadRiwayat() {
 // ---- Mulai proses presensi ----
 async function mulaiPresensi(aksi) {
     aksiPresensi     = aksi;
-    fotoBlob         = null;
-    fotoSudahDiambil = false;
-
-    document.getElementById("judulPresensi").innerText =
-        aksi === "checkin" ? "📸 Ambil Foto Check-In" : "📸 Ambil Foto Check-Out";
-
-    // Sembunyikan step pilih, tampilkan kamera
-    document.getElementById("stepPilih").classList.add("hidden");
-    document.getElementById("stepKamera").classList.remove("hidden");
-    document.getElementById("stepKonfirmasi").classList.add("hidden");
-    document.getElementById("stepLoading").classList.add("hidden");
-    document.getElementById("stepSukses").classList.add("hidden");
-
-    // Sembunyikan canvas, tampilkan video
-    document.getElementById("fotoCanvas").style.display = "none";
-    document.getElementById("videoFeed").style.display  = "block";
-
-    // Mulai kamera
-    const ok = await startCamera("videoFeed");
-    if (!ok) {
-        batalPresensi();
-    }
-}
-
-// ---- Capture foto dan preview ----
-async function captureAndPreview() {
-    const canvas = capturePhoto("videoFeed", "fotoCanvas");
-    if (!canvas) {
-        showAlert("Gagal mengambil foto.", "error");
-        return;
-    }
-
-    // Sembunyikan video, tampilkan canvas (preview)
-    document.getElementById("videoFeed").style.display  = "none";
-    document.getElementById("fotoCanvas").style.display = "block";
-
-    // Konversi ke blob
-    fotoBlob         = await canvasToBlob(canvas);
-    fotoSudahDiambil = true;
-
-    // Ambil GPS di background
-    // gpsData = null;
-    // getGPS().then(gps => {
-    //     gpsData = gps;
-    //     const infoEl = document.getElementById("infoGPS");
-    //     if (gps.lat !== "0") {
-    //         infoEl.innerText = `📍 Lokasi: ${parseFloat(gps.lat).toFixed(5)}, ${parseFloat(gps.long).toFixed(5)}`;
-    //     } else {
-    //         infoEl.innerText = "📍 GPS tidak tersedia (lokasi tidak dicatat)";
-    //     }
-    // });
-
-    // Stop kamera setelah capture
-    stopCamera();
-
-    // Pindah ke step konfirmasi
-    document.getElementById("stepKamera").classList.add("hidden");
-    document.getElementById("stepKonfirmasi").classList.remove("hidden");
-    document.getElementById("judulPresensi").innerText = "Konfirmasi Presensi";
-}
-
-// ---- Foto ulang ----
-function ambilUlang() {
-    fotoBlob         = null;
-    fotoSudahDiambil = false;
-
-    document.getElementById("fotoCanvas").style.display = "none";
-    document.getElementById("stepKonfirmasi").classList.add("hidden");
-    document.getElementById("stepKamera").classList.remove("hidden");
-    document.getElementById("videoFeed").style.display = "block";
-
-    startCamera("videoFeed");
-}
-
-// ---- Batal presensi ----
-function batalPresensi() {
-    stopCamera();
-    fotoBlob         = null;
-    fotoSudahDiambil = false;
-    aksiPresensi     = null;
-
-    document.getElementById("stepPilih").classList.remove("hidden");
-    document.getElementById("stepKamera").classList.add("hidden");
-    document.getElementById("stepKonfirmasi").classList.add("hidden");
-    document.getElementById("judulPresensi").innerText = "Lakukan Presensi";
 }
 
 // ---- Kirim presensi ke blockchain ----
 async function kirimPresensi() {
-    if (!fotoBlob || !fotoSudahDiambil) {
-        showAlert("Ambil foto terlebih dahulu!", "error");
-        return;
-    }
-
     // Tampilkan loading
     document.getElementById("stepKonfirmasi").classList.add("hidden");
     document.getElementById("stepLoading").classList.remove("hidden");
 
-    // const lat  = gpsData ? gpsData.lat  : "0";
-    // const long = gpsData ? gpsData.long : "0";
 
     try {
-        // Step 1: Upload foto ke IPFS
-        document.getElementById("loadingText").innerText = "Mengupload foto ke IPFS...";
-        const cidFoto = await uploadFotoIPFS(fotoBlob);
-
         // Step 2: Kirim transaksi ke blockchain
         document.getElementById("loadingText").innerText = "Menunggu konfirmasi blockchain...";
 
         let tx;
         if (aksiPresensi === "checkin") {
             tx = await attendanceContract.methods
-                .checkIn(cidFoto)
                 .send({ from: walletUser });
         } else {
             tx = await attendanceContract.methods
-                .checkOut(cidFoto)
                 .send({ from: walletUser });
         }
 
@@ -269,10 +168,6 @@ async function kirimPresensi() {
         
         document.getElementById("suksesJudul").innerText = judul;
         document.getElementById("suksesSub").innerText   = sub;
-        
-        const cidLink = `${CONFIG.IPFS_GATEWAY}${cidFoto}`;
-        document.getElementById("suksesCID").innerText = cidFoto;
-        document.getElementById("suksesCID").href      = cidLink;
         
         const txLink = `https://amoy.polygonscan.com/tx/${tx.transactionHash}`;
         document.getElementById("suksesTX").innerText = tx.transactionHash;
@@ -304,18 +199,15 @@ async function kirimPresensi() {
 
 // ---- Reset setelah sukses ----
 function resetPresensi() {
-    fotoBlob         = null;
-    fotoSudahDiambil = false;
     aksiPresensi     = null;
 
     document.getElementById("stepSukses").classList.add("hidden");
     document.getElementById("stepPilih").classList.remove("hidden");
     document.getElementById("judulPresensi").innerText = "Lakukan Presensi";
-    document.getElementById("fotoCanvas").style.display = "none";
 }
 
 function tampilStep(stepId) {
-    const steps = ["stepPilih","stepKamera","stepKonfirmasi","stepLoading","stepSukses"];
+    const steps = ["stepPilih","stepKonfirmasi","stepLoading","stepSukses"];
     steps.forEach(id => {
         const el = document.getElementById(id);
         if (el) el.classList.add("hidden");

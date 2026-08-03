@@ -25,7 +25,7 @@ async function connectWallet() {
         // Cek network — harus Polygon Amoy
         const chainId = await window.ethereum.request({ method: "eth_chainId" });
         if (chainId !== CONFIG.CHAIN_ID) {
-            await switchToAmoy();
+            await switchToSepolia();
         }
 
         // Inisialisasi Web3 dan contract
@@ -48,7 +48,7 @@ async function connectWallet() {
 }
 
 // ---- Switch ke Polygon Amoy ----
-async function switchToAmoy() {
+async function switchToSepolia() {
     try {
         await window.ethereum.request({
             method: "wallet_switchEthereumChain",

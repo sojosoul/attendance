@@ -84,7 +84,7 @@ async function prosesMintt() {
         return;
     }
 
-    setLoading("btnMint", true, "⏳ Upload metadata ke IPFS...");
+    setLoading("btnMint", true, "⏳ Akses Blockchain.....");
 
     try {
         // Step 2: Mint NFT
